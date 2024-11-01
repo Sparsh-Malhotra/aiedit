@@ -8,10 +8,18 @@ export default function Home() {
     return (
         <LayerStore.Provider initialValue={{
             layerComparisonMode: false,
-            layers: []
+            layers: [
+                {
+                    id: crypto.randomUUID(),
+                    url: "",
+                    height: 0,
+                    width: 0,
+                    publicId: "",
+                }
+            ]
         }}>
             <ImageStore.Provider initialValue={{generating: false}}>
-                <main>
+                <main className='h-full'>
                     <Editor/>
                 </main>
             </ImageStore.Provider>
