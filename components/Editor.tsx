@@ -1,7 +1,8 @@
 import React from 'react';
-import UploadImage from "@/components/upload/UploadImage";
 import Layers from "@/components/Layers";
 import ModeToggle from "@/components/theme/ModeToggle";
+import ActiveImage from "@/components/ActiveImage";
+import UploadForm from "@/components/upload/UploadForm";
 
 
 function Editor() {
@@ -12,7 +13,8 @@ function Editor() {
                     <ModeToggle/>
                 </div>
             </div>
-            <UploadImage/>
+            <UploadForm/>
+            <ActiveImage/>
             <Layers/>
         </div>
     );

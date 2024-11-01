@@ -10,24 +10,15 @@ import {
 import {Button} from "./ui/button"
 import {
     ArrowRight,
-    CornerLeftDown,
-    Ellipsis,
-    GitCompare,
-    GitCompareArrows,
     Images,
     Layers2,
-    Trash,
 } from "lucide-react"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
 import {cn} from "@/lib/utils"
 import Image from "next/image"
 import {useLayerStore} from "@/store/layer-store";
 import {useImageStore} from "@/store/image-store";
 import LayerImage from "@/components/layers/LayerImage";
+import LayerInfo from "@/components/layers/LayerInfo";
 
 export default function Layers() {
     const layers = useLayerStore((state) => state.layers)
@@ -145,8 +136,7 @@ export default function Layers() {
                                         ) : null}
                                         <LayerImage layer={layer}/>
                                         {layers.length !== 1 && (
-                                            // <LayerInfo layer={layer} layerIndex={index}/>
-                                            null
+                                            <LayerInfo layer={layer} layerIndex={index}/>
                                         )}
                                     </div>
                                 </div>

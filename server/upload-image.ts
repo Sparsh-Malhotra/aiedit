@@ -17,7 +17,7 @@ const UploadImageSchema = z.object({
 
 export const uploadImage = actionClient
     .schema(UploadImageSchema)
-    .action(async ({parsedInput: {formData}}) => {
+    .action(async ({parsedInput: {formData}}): Promise<UploadResultType> => {
         const image = formData.get('image') as File;
 
         if (!formData || !image) {
@@ -41,6 +41,7 @@ export const uploadImage = actionClient
                 uploadStream.end(buffer);
             })
         } catch (error) {
-            return {error};
+            console.error(error);
+            return {error: 'Failed to upload image'};
         }
     })

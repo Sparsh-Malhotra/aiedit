@@ -16,7 +16,7 @@ export default function LayerImage({layer}: { layer: Layer }) {
                         height={50}
                     />
                 </div>
-                <div className=" relative">
+                <div className="relative">
                     <p className="text-xs">{`${layer.name?.slice(0, 15)}.${
                         layer.format
                     }`}</p>
