@@ -5,6 +5,7 @@ import ActiveImage from "@/components/ActiveImage";
 import UploadForm from "@/components/upload/UploadForm";
 import {useLayerStore} from "@/store/layer-store";
 import ImageToolbar from "@/components/toolbar/image-toolbar";
+import Loader from "@/components/Loader";
 
 
 function Editor() {
@@ -23,6 +24,7 @@ function Editor() {
             <UploadForm/>
             <ActiveImage/>
             <Layers/>
+            <Loader/>
         </div>
     );
 }
