@@ -4,6 +4,7 @@ import Editor from "@/components/Editor";
 import {Toaster} from "sonner";
 import {LayerStoreProvider} from "@/store/layer-store";
 import {ImageStoreProvider} from "@/store/image-store";
+import { generateId } from "@/lib/utils";
 
 export default function Home() {
     return (
@@ -14,7 +15,7 @@ export default function Home() {
                     layerComparisonMode: false,
                     layers: [
                         {
-                            id: crypto.randomUUID(),
+                            id: generateId(),
                             url: "",
                             height: 0,
                             width: 0,

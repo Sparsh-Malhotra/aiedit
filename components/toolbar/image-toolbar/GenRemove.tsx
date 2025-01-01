@@ -9,6 +9,7 @@ import {Eraser} from "lucide-react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {genRemove} from "@/server/gen-remove";
+import { generateId } from '@/lib/utils';
 
 function GenRemove() {
     // const tags = useImageStore((state) => state.tags)
@@ -88,7 +89,7 @@ function GenRemove() {
                         if (res?.data?.success) {
                             setGenerating(false)
 
-                            const newLayerId = crypto.randomUUID()
+                            const newLayerId = generateId()
                             addLayer({
                                 id: newLayerId,
                                 url: res.data.success,

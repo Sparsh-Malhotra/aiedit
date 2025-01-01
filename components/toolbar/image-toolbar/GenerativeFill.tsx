@@ -12,6 +12,7 @@ import {AnimatePresence, motion} from "framer-motion"
 import {useLayerStore} from "@/store/layer-store";
 import {useImageStore} from "@/store/image-store";
 import {genFill} from "@/server/gen-fill";
+import { generateId } from "@/lib/utils"
 
 const PREVIEW_SIZE = 250
 const EXPANSION_THRESHOLD = 250 // px
@@ -83,7 +84,7 @@ export default function GenerativeFill() {
         if (res?.data?.success) {
             console.log(res.data.success)
             setGenerating(false)
-            const newLayerId = crypto.randomUUID()
+            const newLayerId = generateId()
             addLayer({
                 id: newLayerId,
                 name: "generative-fill",

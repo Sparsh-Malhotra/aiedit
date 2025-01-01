@@ -13,7 +13,7 @@ import {
     Images,
     Layers2,
 } from "lucide-react"
-import {cn} from "@/lib/utils"
+import {cn, generateId} from "@/lib/utils"
 import Image from "next/image"
 import {useLayerStore} from "@/store/layer-store";
 import {useImageStore} from "@/store/image-store";
@@ -150,7 +150,7 @@ export default function Layers() {
                     layout
                     onClick={() => {
                         addLayer({
-                            id: crypto.randomUUID(),
+                            id: generateId(),
                             url: "",
                             height: 0,
                             width: 0,

@@ -7,6 +7,7 @@ import {ImageOff} from "lucide-react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {replaceBackground} from "@/server/bg-replace";
+import { generateId } from '@/lib/utils';
 
 function BgReplace() {
     const setGenerating = useImageStore((state) => state.setGenerating)
@@ -61,7 +62,7 @@ function BgReplace() {
                         })
 
                         if (res?.data?.success) {
-                            const newLayerId = crypto.randomUUID()
+                            const newLayerId = generateId()
                             addLayer({
                                 id: newLayerId,
                                 name: "bg-replaced-" + activeLayer.name,

@@ -11,6 +11,7 @@ import {Input} from "@/components/ui/input";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {Checkbox} from "@/components/ui/checkbox";
 import {extractPart} from "@/server/extract-part";
+import { generateId } from '@/lib/utils';
 
 function ExtractPart() {
     const setGenerating = useImageStore((state) => state.setGenerating)
@@ -120,7 +121,7 @@ function ExtractPart() {
                         })
 
                         if (res?.data?.success) {
-                            const newLayerId = crypto.randomUUID()
+                            const newLayerId = generateId()
                             addLayer({
                                 id: newLayerId,
                                 name: "extracted-" + activeLayer.name,

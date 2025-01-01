@@ -14,7 +14,7 @@ import {
     CardHeader,
     CardTitle,
 } from "../../ui/card"
-import {cn} from "@/lib/utils"
+import {cn, generateId} from "@/lib/utils"
 import {useImageStore} from "@/store/image-store";
 import {useLayerStore} from "@/store/layer-store";
 import Youtube from "@/components/icons/Youtube";
@@ -42,7 +42,7 @@ export default function SmartCrop() {
         if (res?.data?.success) {
             console.log(res.data.success)
             setGenerating(false)
-            const newLayerId = crypto.randomUUID()
+            const newLayerId = generateId()
             const thumbnailUrl = res.data.success.replace(/\.[^/.]+$/, ".jpg")
             addLayer({
                 id: newLayerId,

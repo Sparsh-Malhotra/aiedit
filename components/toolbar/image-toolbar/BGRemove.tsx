@@ -11,6 +11,7 @@ import {Image as ImageIcon} from "lucide-react"
 import {toast} from "sonner"
 import {useLayerStore} from "@/store/layer-store";
 import {bgRemove} from "@/server/bg-remove";
+import { generateId } from "@/lib/utils";
 
 export default function BgRemove() {
     // const activeTag = useImageStore((state) => state.activeTag)
@@ -54,7 +55,7 @@ export default function BgRemove() {
                             format: activeLayer.format!,
                         })
                         if (res?.data?.success) {
-                            const newLayerId = crypto.randomUUID()
+                            const newLayerId = generateId()
                             addLayer({
                                 id: newLayerId,
                                 name: "bg-removed" + activeLayer.name,
