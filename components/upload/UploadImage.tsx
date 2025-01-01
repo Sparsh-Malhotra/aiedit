@@ -22,7 +22,7 @@ function UploadImage() {
             "image/jpeg": [".jpeg"],
             "image/webp": [".webp"]
         },
-        onDrop: async (acceptedFiles, rejectedFiles) => {
+        onDrop: async (acceptedFiles) => {
             if (acceptedFiles.length) {
                 const formData = new FormData();
                 formData.append("image", acceptedFiles[0]);
