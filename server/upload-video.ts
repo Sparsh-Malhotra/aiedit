@@ -1,62 +1,54 @@
-"use server"
+"use server";
 
-import {UploadApiResponse, v2 as cloudinary} from "cloudinary"
-import z from "zod"
+import {UploadApiResponse, v2 as cloudinary} from "cloudinary";
+import z from "zod";
 import {actionClient} from "@/lib/action-client";
 
 cloudinary.config({
     cloud_name: "restyled",
     api_key: process.env.CLOUDINARY_KEY,
     api_secret: process.env.CLOUDINARY_SECRET,
-})
+});
 
 const formData = z.object({
     video: z.instanceof(FormData),
-})
+});
 
 type UploadResult =
     | { success: UploadApiResponse; error?: never }
-    | { error: string; success?: never }
+    | { error: string; success?: never };
 
 export const uploadVideo = actionClient
     .schema(formData)
     .action(async ({parsedInput: {video}}): Promise<UploadResult> => {
-        console.log(video)
-        const formVideo = video.get("video")
+        const formVideo = video.get("video");
 
-        if (!formVideo) return {error: "No video provided"}
-        if (!video) return {error: "No video provided"}
+        if (!formVideo) return {error: "No video provided"};
 
-        const file = formVideo as File
+        const file = formVideo as File;
 
         try {
-            const arrayBuffer = await file.arrayBuffer()
-            const buffer = Buffer.from(arrayBuffer)
+            const arrayBuffer = await file.arrayBuffer();
+            const base64Data = Buffer.from(arrayBuffer).toString("base64");
+            const fileUri = `data:${file.type};base64,${base64Data}`;
 
-            return new Promise<UploadResult>((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    {
+            const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+                cloudinary.uploader
+                    .upload(fileUri, {
                         resource_type: "video",
                         use_filename: true,
                         unique_filename: false,
                         filename_override: file.name,
-                        folder: 'aiedit'
-                    },
-                    (error, result) => {
-                        if (error || !result) {
-                            console.error("Upload failed:", error)
-                            reject({error: "Upload failed"})
-                        } else {
-                            console.log("Upload successful:", result)
-                            resolve({success: result})
-                        }
-                    }
-                )
+                        folder: "aiedit",
+                        invalidate: true,
+                    })
+                    .then(resolve)
+                    .catch(reject);
+            });
 
-                uploadStream.end(buffer)
-            })
+            return {success: result};
         } catch (error) {
-            console.error("Error processing file:", error)
-            return {error: "Error processing file"}
+            console.error("Error processing video upload:", error);
+            return {error: "Failed to upload video"};
         }
-    })
+    });
