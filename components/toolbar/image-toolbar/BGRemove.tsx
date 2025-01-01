@@ -7,7 +7,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import {Image} from "lucide-react"
+import {Image as ImageIcon} from "lucide-react"
 import {toast} from "sonner"
 import {useLayerStore} from "@/store/layer-store";
 import {bgRemove} from "@/server/bg-remove";
@@ -27,7 +27,7 @@ export default function BgRemove() {
                 <Button variant="outline" className="py-8">
           <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
             BG Removal
-            <Image size={18}/>
+            <ImageIcon size={18}/>
           </span>
                 </Button>
             </PopoverTrigger>
