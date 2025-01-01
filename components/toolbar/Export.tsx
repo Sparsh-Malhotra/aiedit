@@ -9,15 +9,15 @@ import {
     CardDescription,
     CardTitle,
 } from "../ui/card"
-import {useState} from "react"
+import {useCallback, useState} from "react"
 import {cn} from "@/lib/utils"
 import {useLayerStore} from "@/store/layer-store";
 
 export default function ExportAsset({resource}: { resource: string }) {
     const activeLayer = useLayerStore((state) => state.activeLayer)
     const [selected, setSelected] = useState("original")
-    
-    const handleDownload = async () => {
+
+    const handleDownload = useCallback(async () => {
         if (activeLayer?.publicId) {
             try {
                 const res = await fetch(
@@ -55,7 +55,7 @@ export default function ExportAsset({resource}: { resource: string }) {
                 // Here you could show an error message to the user
             }
         }
-    }
+    }, [activeLayer, selected])
 
     return (
         <Dialog>
