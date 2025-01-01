@@ -29,27 +29,23 @@ export const uploadImage = actionClient
         }
 
         try {
-            const arrayBuffer = await image.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
+            const fileBuffer = await image.arrayBuffer();
+            const base64Data = Buffer.from(fileBuffer).toString('base64');
+            const fileUri = `data:${image.type};base64,${base64Data}`;
 
-            return new Promise<UploadResultType>((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    {
-                        folder: 'aiedit',
-                        resource_type: 'auto'
-                    },
-                    (error, result) => {
-                        if (error || !result) {
-                            console.error('Cloudinary upload error:', error);
-                            return reject({error: 'Failed to upload image'});
-                        }
-                        resolve({success: result});
-                    }
-                );
-                uploadStream.end(buffer);
+            const result = await new Promise((resolve, reject) => {
+                cloudinary.uploader.upload(fileUri, {
+                    folder: 'aiedit',
+                    invalidate: true
+                })
+                    .then(resolve)
+                    .catch(reject);
             });
+
+            // @ts-ignore
+            return {success: result};
         } catch (error) {
-            console.error('Upload error:', error);
+            console.error(error);
             return {error: 'Failed to upload image'};
         }
     });
