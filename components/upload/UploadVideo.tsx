@@ -19,6 +19,7 @@ export default function UploadVideo() {
 
     const {getRootProps, getInputProps, isDragActive} = useDropzone({
         maxFiles: 1,
+        maxSize: 3 * 1024 * 1024,
         accept: {
             "video/mp4": [".mp4", ".MP4"],
         },
@@ -57,8 +58,12 @@ export default function UploadVideo() {
             }
 
             if (fileRejections.length) {
-                console.log("rejected")
-                toast.error(fileRejections[0].errors[0].message)
+                console.log("rejected", fileRejections[0].errors)
+                const error = fileRejections[0].errors[0]
+                if (error.code === 'file-too-large') {
+                    toast.error('Video must be smaller than 3MB')
+                } else
+                    toast.error(fileRejections[0].errors[0].message)
             }
         },
     })
@@ -80,7 +85,7 @@ export default function UploadVideo() {
                             ? "Drop your video here!"
                             : "Start by uploading a video"}
                     </p>
-                    <p className="text-muted-foreground">Supported Format: .mp4</p>
+                    <p className="text-muted-foreground">Supported Format: .mp4 (max 3MB)</p>
                 </div>
             </CardContent>
         </Card>
