@@ -37,7 +37,7 @@ export default function ExportAsset({resource}: { resource: string }) {
                 if (!imageResponse.ok) {
                     throw new Error("Failed to fetch image")
                 }
-                const imageBlob = await imageResponse.blob()
+                // const imageBlob = await imageResponse.blob()
 
                 // Create a download link and trigger the download
                 // const downloadUrl = URL.createObjectURL(imageBlob)
@@ -49,7 +49,7 @@ export default function ExportAsset({resource}: { resource: string }) {
                 // document.body.removeChild(link)
 
                 // Clean up the object URL
-                URL.revokeObjectURL(downloadUrl)
+                // URL.revokeObjectURL(downloadUrl)
             } catch (error) {
                 console.error("Download failed:", error)
                 // Here you could show an error message to the user
