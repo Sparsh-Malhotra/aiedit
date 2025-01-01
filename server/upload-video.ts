@@ -35,12 +35,8 @@ export const uploadVideo = actionClient
             const result = await new Promise<UploadApiResponse>((resolve, reject) => {
                 cloudinary.uploader
                     .upload(fileUri, {
-                        resource_type: "video",
-                        use_filename: true,
-                        unique_filename: false,
-                        filename_override: file.name,
-                        folder: "aiedit",
-                        invalidate: true,
+                        folder: 'aiedit',
+                        invalidate: true
                     })
                     .then(resolve)
                     .catch(reject);
