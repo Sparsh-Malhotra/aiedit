@@ -18,46 +18,38 @@ export default function ExportAsset({resource}: { resource: string }) {
     const [selected, setSelected] = useState("original")
 
     const handleDownload = useCallback(async () => {
-        if (activeLayer?.publicId) {
-            try {
-                const res = await fetch(
-                    `/api/download?publicId=${activeLayer.publicId}&quality=${selected}&resource_type=${activeLayer.resourceType}&format=${activeLayer.format}&url=${activeLayer.url}`
-                )
-                if (!res.ok) {
-                    throw new Error("Failed to fetch image URL")
-                }
-                const data = await res.json()
-                console.log(data)
-                if (data.error) {
-                    throw new Error(data.error)
-                }
+        if (!activeLayer?.publicId) return;
 
-                // Fetch the image
-                const imageResponse = await fetch(data.url)
-                if (!imageResponse.ok) {
-                    throw new Error("Failed to fetch image")
-                }
-                const imageBlob = await imageResponse.blob()
+        try {
+            const res = await fetch(
+                `/api/download?publicId=${activeLayer.publicId}&quality=${selected}&resource_type=${activeLayer.resourceType}&format=${activeLayer.format}&url=${activeLayer.url}`
+            )
+            if (!res.ok) throw new Error("Failed to fetch image URL");
 
-                // Create a download link and trigger the download
-                const downloadUrl = URL.createObjectURL(imageBlob)
-                if (typeof document !== "undefined") {
-                    const link = document.createElement("a")
-                    link.href = downloadUrl
-                    link.download = data.filename
-                    document.body.appendChild(link)
-                    link.click()
-                    document.body.removeChild(link)
-                }
-                
-                // Clean up the object URL
-                URL.revokeObjectURL(downloadUrl)
-            } catch (error) {
-                console.error("Download failed:", error)
-                // Here you could show an error message to the user
-            }
+            const data = await res.json()
+            if (data.error) throw new Error(data.error);
+
+            const imageResponse = await fetch(data.url)
+            if (!imageResponse.ok) throw new Error("Failed to fetch image");
+
+            const imageBlob = await imageResponse.blob()
+            const downloadUrl = URL.createObjectURL(imageBlob)
+
+            downloadFile(downloadUrl, data.filename)
+            URL.revokeObjectURL(downloadUrl)
+        } catch (error) {
+            console.error("Download failed:", error)
         }
     }, [activeLayer, selected])
+
+    const downloadFile = (url: string, filename: string) => {
+        const link = document.createElement("a")
+        link.href = url
+        link.download = filename
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
 
     return (
         <Dialog>
