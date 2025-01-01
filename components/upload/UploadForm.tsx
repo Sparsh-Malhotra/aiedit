@@ -8,6 +8,7 @@ import {useState} from "react"
 import {useLayerStore} from "@/store/layer-store";
 import UploadImage from "@/components/upload/UploadImage";
 import {Label} from "@/components/ui/label";
+import UploadVideo from "@/components/upload/UploadVideo";
 
 export default function UploadForm() {
     const activeLayer = useLayerStore((state) => state.activeLayer)
@@ -19,7 +20,7 @@ export default function UploadForm() {
         return (
             <div className="w-full p-24 flex flex-col  justify-center  h-full">
                 {selectedType === "image" ? <UploadImage/> : null}
-                {/*{selectedType === "video" ? <UploadVideo/> : null}*/}
+                {selectedType === "video" ? <UploadVideo/> : null}
 
                 <RadioGroup
                     defaultValue="image"

@@ -6,6 +6,8 @@ import UploadForm from "@/components/upload/UploadForm";
 import {useLayerStore} from "@/store/layer-store";
 import ImageToolbar from "@/components/toolbar/image-toolbar";
 import Loader from "@/components/Loader";
+import VideoToolbar from "@/components/toolbar/video-toolbar";
+import ExportAsset from "@/components/toolbar/Export";
 
 
 function Editor() {
@@ -19,6 +21,8 @@ function Editor() {
                 </div>
                 <div className='flex flex-col gap-4'>
                     {activeLayer.resourceType === 'image' && <ImageToolbar/>}
+                    {activeLayer.resourceType === "video" ? <VideoToolbar/> : null}
+                    <ExportAsset resource={activeLayer.resourceType!}/>
                 </div>
             </div>
             <UploadForm/>

@@ -29,7 +29,7 @@ function GenRemove() {
             <PopoverTrigger disabled={!activeLayer?.url} asChild>
                 <Button variant="outline" className="p-8">
           <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
-            Content Aware <Eraser size={20}/>
+            Content Aware Delete <Eraser size={20}/>
           </span>
                 </Button>
             </PopoverTrigger>

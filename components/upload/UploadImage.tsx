@@ -5,6 +5,8 @@ import {Card, CardContent} from "@/components/ui/card";
 import {cn} from "@/lib/utils";
 import {useImageStore} from "@/store/image-store";
 import {useLayerStore} from "@/store/layer-store";
+import imageAnimation from '@/public/assets/image-upload.json';
+import Lottie from "lottie-react";
 
 function UploadImage() {
     const setGenerating = useImageStore((state) => state.setGenerating)
@@ -68,6 +70,7 @@ function UploadImage() {
                 <CardContent className="flex flex-col h-full items-center justify-center px-2 py-24 text-xs">
                     <input {...getInputProps()}/>
                     <div className="flex items-center flex-col justify-center gap-4">
+                        <Lottie className="h-48" animationData={imageAnimation}/>
                         <p className="text-muted-foreground text-2xl">
                             {isDragActive
                                 ? "Drop your image here!"

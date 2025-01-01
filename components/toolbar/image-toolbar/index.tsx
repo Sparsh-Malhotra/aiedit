@@ -5,6 +5,7 @@ import BgReplace from "@/components/toolbar/image-toolbar/BGReplace";
 import GenerativeFill from "@/components/toolbar/image-toolbar/GenerativeFill";
 import ExtractPart from "@/components/toolbar/image-toolbar/ExtractPart";
 
+
 function ImageToolbar() {
     return (
         <>
