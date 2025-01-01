@@ -41,13 +41,15 @@ export default function ExportAsset({resource}: { resource: string }) {
 
                 // Create a download link and trigger the download
                 const downloadUrl = URL.createObjectURL(imageBlob)
-                const link = document.createElement("a")
-                link.href = downloadUrl
-                link.download = data.filename
-                document.body.appendChild(link)
-                link.click()
-                document.body.removeChild(link)
-
+                if (typeof document !== "undefined") {
+                    const link = document.createElement("a")
+                    link.href = downloadUrl
+                    link.download = data.filename
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                }
+                
                 // Clean up the object URL
                 URL.revokeObjectURL(downloadUrl)
             } catch (error) {
