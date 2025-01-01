@@ -6,7 +6,9 @@ import {cn} from "@/lib/utils";
 import {useImageStore} from "@/store/image-store";
 import {useLayerStore} from "@/store/layer-store";
 import imageAnimation from '@/public/assets/image-upload.json';
-import Lottie from "lottie-react";
+import dynamic from 'next/dynamic';
+
+const Lottie = dynamic(() => import('lottie-react'), {ssr: false});
 
 function UploadImage() {
     const setGenerating = useImageStore((state) => state.setGenerating)

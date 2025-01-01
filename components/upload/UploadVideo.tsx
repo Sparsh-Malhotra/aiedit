@@ -2,13 +2,15 @@
 
 import {uploadVideo} from "@/server/upload-video"
 import {useDropzone} from "react-dropzone"
-import Lottie from "lottie-react"
 import {Card, CardContent} from "../ui/card"
 import {cn} from "@/lib/utils"
 import videoAnimation from "@/public/assets/video-upload.json"
 import {toast} from "sonner"
 import {useImageStore} from "@/store/image-store";
 import {useLayerStore} from "@/store/layer-store";
+import dynamic from 'next/dynamic';
+
+const Lottie = dynamic(() => import('lottie-react'), {ssr: false});
 
 export default function UploadVideo() {
     // const setTags = useImageStore((state) => state.setTags)
