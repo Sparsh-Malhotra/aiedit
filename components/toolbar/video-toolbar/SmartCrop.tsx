@@ -1,10 +1,5 @@
 import React, {useState} from "react"
 import {Button} from "@/components/ui/button"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
 import {Crop, Square} from "lucide-react"
 import {toast} from "sonner"
 import {
@@ -20,6 +15,11 @@ import {useLayerStore} from "@/store/layer-store";
 import Youtube from "@/components/icons/Youtube";
 import TikTok from "@/components/icons/Titkok";
 import {genCrop} from "@/server/smart-crop";
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 export default function SmartCrop() {
     const setGenerating = useImageStore((state) => state.setGenerating)
@@ -30,6 +30,7 @@ export default function SmartCrop() {
     const generating = useImageStore((state) => state.generating)
     const setActiveLayer = useLayerStore((state) => state.setActiveLayer)
     const [aspectRatio, setAspectRatio] = useState("16:9")
+    const [open, setOpen] = useState(false)
 
     const handleGenCrop = async () => {
         setGenerating(true)
@@ -57,6 +58,7 @@ export default function SmartCrop() {
             })
             toast.success('Processing done')
             setActiveLayer(newLayerId)
+            setOpen(false)
         }
         if (res?.data?.error) {
             toast.error(res.data.error)
@@ -65,16 +67,16 @@ export default function SmartCrop() {
     }
 
     return (
-        <Popover>
-            <PopoverTrigger disabled={!activeLayer?.url} asChild>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger disabled={!activeLayer?.url} asChild>
                 <Button variant="outline" className="py-8">
-          <span className="flex gap-1 items-center  flex-col text-xs font-medium">
-            Smart Crop
-            <Crop size={18}/>
-          </span>
+                    <span className="flex gap-1 items-center flex-col text-xs font-medium">
+                        Smart Crop
+                        <Crop size={18}/>
+                    </span>
                 </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full">
+            </DialogTrigger>
+            <DialogContent className="max-w-[90%] sm:max-w-2xl">
                 <div className="flex flex-col h-full">
                     <div className="space-y-2 pb-4">
                         <h3 className="font-medium text-center py-2 leading-none">
@@ -82,11 +84,11 @@ export default function SmartCrop() {
                         </h3>
                     </div>
                     <h4 className="text-md font-medium pb-2">Format</h4>
-                    <div className={"flex gap-4 items-center justify-center pb-2"}>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center justify-center pb-2">
                         <Card
                             className={cn(
-                                aspectRatio === "16:9" ? " border-primary" : "",
-                                "p-4 w-36 cursor-pointer"
+                                aspectRatio === "16:9" ? "border-primary" : "",
+                                "p-4 w-full sm:w-36 cursor-pointer"
                             )}
                             onClick={() => setAspectRatio("16:9")}
                         >
@@ -102,15 +104,15 @@ export default function SmartCrop() {
                         </Card>
                         <Card
                             className={cn(
-                                aspectRatio === "9:16" ? " border-primary" : "",
-                                "p-4 w-36 cursor-pointer"
+                                aspectRatio === "9:16" ? "border-primary" : "",
+                                "p-4 w-full sm:w-36 cursor-pointer"
                             )}
                             onClick={() => setAspectRatio("9:16")}
                         >
                             <CardHeader className="p-0 text-center">
-                                <CardTitle className="text-md ">Tiktok</CardTitle>
+                                <CardTitle className="text-md">Tiktok</CardTitle>
                                 <CardDescription>
-                                    <p className="text-sm font-bold ">9:16</p>
+                                    <p className="text-sm font-bold">9:16</p>
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="flex items-center justify-center p-0 pt-2">
@@ -119,8 +121,8 @@ export default function SmartCrop() {
                         </Card>
                         <Card
                             className={cn(
-                                aspectRatio === "1:1" ? " border-primary" : "",
-                                "p-4 w-36 cursor-pointer"
+                                aspectRatio === "1:1" ? "border-primary" : "",
+                                "p-4 w-full sm:w-36 cursor-pointer"
                             )}
                             onClick={() => setAspectRatio("1:1")}
                         >
@@ -139,13 +141,13 @@ export default function SmartCrop() {
                     <Button
                         onClick={handleGenCrop}
                         className="w-full mt-4"
-                        variant={"outline"}
+                        variant="outline"
                         disabled={!activeLayer.url || generating}
                     >
                         {generating ? "Cropping..." : "Smart Crop 🎨"}
                     </Button>
                 </div>
-            </PopoverContent>
-        </Popover>
+            </DialogContent>
+        </Dialog>
     )
 }
