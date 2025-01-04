@@ -60,7 +60,7 @@ export const initiateTranscription = actionClient
             })
 
             // Poll for completion
-            const maxAttempts = 20
+            const maxAttempts = 50
             const delay = 2000
             let status = "pending"
 

@@ -37,7 +37,7 @@ export const genCrop = actionClient
         const fillUrl = `${parts[0]}/upload/ar_${aspect},c_fill,g_auto,h_${height}/${parts[1]}`
         // Poll the URL to check if the image is processed
         let isProcessed = false
-        const maxAttempts = 20
+        const maxAttempts = 50
         const delay = 1000 // 1 second
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
             isProcessed = await checkImageProcessing(fillUrl)

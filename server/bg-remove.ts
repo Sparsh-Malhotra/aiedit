@@ -25,7 +25,7 @@ export const bgRemove = actionClient
         const bgRemoveUrl = `${parts[0]}/upload/e_background_removal/${parts[1]}`
 
         let isProcessed = false
-        const maxAttempts = 20
+        const maxAttempts = 50
         const delay = 500
 
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
