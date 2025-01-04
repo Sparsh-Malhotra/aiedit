@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
     experimental: {
         serverActions: {
             bodySizeLimit: '3mb',
-            allowedOrigins: ['dr9d6z4ym.cloudinary.com']
+            allowedOrigins: ['dr9d6z4ym.cloudinary.com'],
         },
     },
 };
