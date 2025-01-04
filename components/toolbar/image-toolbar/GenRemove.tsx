@@ -13,6 +13,7 @@ import {
     DialogContent,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {toast} from "sonner";
 
 function GenRemove() {
     const generating = useImageStore((state) => state.generating)
@@ -24,26 +25,31 @@ function GenRemove() {
     const [activeTag, setActiveTag] = useState('')
 
     const handleRemove = async () => {
-        setGenerating(true)
-        const res = await genRemove({
-            activeImage: activeLayer.url!,
-            prompt: activeTag,
-        })
-        if (res?.data?.success) {
-            setGenerating(false)
-            const newLayerId = crypto.randomUUID()
-            addLayer({
-                id: newLayerId,
-                url: res.data.success,
-                format: activeLayer.format,
-                height: activeLayer.height,
-                width: activeLayer.width,
-                name: "genRemoved_" + activeLayer.name,
-                publicId: activeLayer.publicId,
-                resourceType: "image",
+        try {
+            setGenerating(true)
+            const res = await genRemove({
+                activeImage: activeLayer.url!,
+                prompt: activeTag,
             })
-            setActiveLayer(newLayerId)
-            setOpen(false)
+            if (res?.data?.success) {
+                const newLayerId = crypto.randomUUID()
+                addLayer({
+                    id: newLayerId,
+                    url: res.data.success,
+                    format: activeLayer.format,
+                    height: activeLayer.height,
+                    width: activeLayer.width,
+                    name: "genRemoved_" + activeLayer.name,
+                    publicId: activeLayer.publicId,
+                    resourceType: "image",
+                })
+                setActiveLayer(newLayerId)
+                setOpen(false)
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'API credits exhausted. Please try again tomorrow.')
+        } finally {
+            setGenerating(false)
         }
     }
 

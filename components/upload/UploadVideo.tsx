@@ -32,30 +32,35 @@ export default function UploadVideo() {
                 formData.append("video", acceptedFiles[0])
                 setGenerating(true)
 
-                const res = await uploadVideo({video: formData})
+                try {
+                    const res = await uploadVideo({video: formData})
 
-                if (res?.data?.success) {
-                    const videoUrl = res.data.success.url
-                    const thumbnailUrl = videoUrl.replace(/\.[^/.]+$/, ".jpg")
-                    updateLayer({
-                        id: activeLayer.id,
-                        url: res.data.success.url,
-                        width: res.data.success.width,
-                        height: res.data.success.height,
-                        name: res.data.success.original_filename,
-                        publicId: res.data.success.public_id,
-                        format: res.data.success.format,
-                        poster: thumbnailUrl,
-                        resourceType: res.data.success.resource_type,
-                    })
-                    // setTags(res.data.success.tags)
-                    setActiveLayer(activeLayer.id)
-                    console.log(res.data.success)
+                    if (res?.data?.success) {
+                        const videoUrl = res.data.success.url
+                        const thumbnailUrl = videoUrl.replace(/\.[^/.]+$/, ".jpg")
+                        updateLayer({
+                            id: activeLayer.id,
+                            url: res.data.success.url,
+                            width: res.data.success.width,
+                            height: res.data.success.height,
+                            name: res.data.success.original_filename,
+                            publicId: res.data.success.public_id,
+                            format: res.data.success.format,
+                            poster: thumbnailUrl,
+                            resourceType: res.data.success.resource_type,
+                        })
+                        // setTags(res.data.success.tags)
+                        setActiveLayer(activeLayer.id)
+                        console.log(res.data.success)
+                    }
+                    if (res?.data?.error) {
+                        setGenerating(false)
+                        toast.error(res.data.error)
+                    }
+                } catch (error) {
+                    toast.error(error instanceof Error ? error.message : 'Failed to upload video');
+                } finally {
                     setGenerating(false)
-                }
-                if (res?.data?.error) {
-                    setGenerating(false)
-                    toast.error(res.data.error)
                 }
             }
 

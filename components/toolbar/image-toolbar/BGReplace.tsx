@@ -11,6 +11,7 @@ import {
     DialogContent,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {toast} from "sonner";
 
 function BgReplace() {
     const setGenerating = useImageStore((state) => state.setGenerating)
@@ -58,27 +59,32 @@ function BgReplace() {
                     disabled={!activeLayer?.url || generating}
                     className="w-full mt-4"
                     onClick={async () => {
-                        setGenerating(true)
-                        const res = await replaceBackground({
-                            prompt: prompt,
-                            activeImage: activeLayer.url!,
-                        })
-
-                        if (res?.data?.success) {
-                            const newLayerId = crypto.randomUUID()
-                            addLayer({
-                                id: newLayerId,
-                                name: "bg-replaced-" + activeLayer.name,
-                                format: activeLayer.format,
-                                height: activeLayer.height,
-                                width: activeLayer.width,
-                                url: res.data.success,
-                                publicId: activeLayer.publicId,
-                                resourceType: "image",
+                        try {
+                            setGenerating(true)
+                            const res = await replaceBackground({
+                                prompt: prompt,
+                                activeImage: activeLayer.url!,
                             })
+
+                            if (res?.data?.success) {
+                                const newLayerId = crypto.randomUUID()
+                                addLayer({
+                                    id: newLayerId,
+                                    name: "bg-replaced-" + activeLayer.name,
+                                    format: activeLayer.format,
+                                    height: activeLayer.height,
+                                    width: activeLayer.width,
+                                    url: res.data.success,
+                                    publicId: activeLayer.publicId,
+                                    resourceType: "image",
+                                })
+                                setActiveLayer(newLayerId)
+                                setOpen(false)
+                            }
+                        } catch (error) {
+                            toast.error(error instanceof Error ? error.message : 'API credits exhausted. Please try again tomorrow.')
+                        } finally {
                             setGenerating(false)
-                            setActiveLayer(newLayerId)
-                            setOpen(false)
                         }
                     }}
                 >

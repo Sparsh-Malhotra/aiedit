@@ -15,6 +15,7 @@ import {
     DialogContent,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {toast} from "sonner";
 
 function ExtractPart() {
     const setGenerating = useImageStore((state) => state.setGenerating)
@@ -40,31 +41,36 @@ function ExtractPart() {
     }
 
     const handleExtract = async () => {
-        setGenerating(true)
-        const res = await extractPart({
-            prompts: prompts.filter((p) => p.trim() !== ""),
-            activeImage: activeLayer.url!,
-            format: activeLayer.format!,
-            multiple,
-            mode: mode as "default" | "mask",
-            invert,
-        })
-
-        if (res?.data?.success) {
-            const newLayerId = crypto.randomUUID()
-            addLayer({
-                id: newLayerId,
-                name: "extracted-" + activeLayer.name,
-                format: ".png",
-                height: activeLayer.height,
-                width: activeLayer.width,
-                url: res.data.success,
-                publicId: activeLayer.publicId,
-                resourceType: "image",
+        try {
+            setGenerating(true)
+            const res = await extractPart({
+                prompts: prompts.filter((p) => p.trim() !== ""),
+                activeImage: activeLayer.url!,
+                format: activeLayer.format!,
+                multiple,
+                mode: mode as "default" | "mask",
+                invert,
             })
+
+            if (res?.data?.success) {
+                const newLayerId = crypto.randomUUID()
+                addLayer({
+                    id: newLayerId,
+                    name: "extracted-" + activeLayer.name,
+                    format: ".png",
+                    height: activeLayer.height,
+                    width: activeLayer.width,
+                    url: res.data.success,
+                    publicId: activeLayer.publicId,
+                    resourceType: "image",
+                })
+                setActiveLayer(newLayerId)
+                setOpen(false)
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'API credits exhausted. Please try again tomorrow.')
+        } finally {
             setGenerating(false)
-            setActiveLayer(newLayerId)
-            setOpen(false)
         }
     }
 

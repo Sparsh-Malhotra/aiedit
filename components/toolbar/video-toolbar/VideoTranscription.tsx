@@ -56,7 +56,7 @@ export default function VideoTranscription() {
                 }
             }
         } catch (error) {
-            toast.error("An error occurred during transcription")
+            toast.error(error instanceof Error ? error.message : 'API credits exhausted. Please try again tomorrow.')
             console.error("Transcription error:", error)
         } finally {
             setTranscribing(false)

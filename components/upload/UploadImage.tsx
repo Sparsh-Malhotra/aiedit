@@ -7,6 +7,7 @@ import {useImageStore} from "@/store/image-store";
 import {useLayerStore} from "@/store/layer-store";
 import imageAnimation from '@/public/assets/image-upload.json';
 import dynamic from 'next/dynamic';
+import {toast} from "sonner";
 
 const Lottie = dynamic(() => import('lottie-react'), {ssr: false});
 
@@ -43,22 +44,27 @@ function UploadImage() {
                 });
                 setActiveLayer(activeLayer.id);
 
-                const response = await uploadImage({formData})
-                console.log(response)
-                if (response?.data?.success) {
-                    updateLayer({
-                        id: activeLayer.id,
-                        url: response.data.success.url,
-                        width: response.data.success.width,
-                        height: response.data.success.height,
-                        name: response.data.success.original_filename,
-                        publicId: response.data.success.public_id,
-                        format: response.data.success.format,
-                        resourceType: response.data.success.resource_type,
-                    })
-                    setActiveLayer(activeLayer.id);
+                try {
+                    const response = await uploadImage({formData})
+                    console.log(response)
+                    if (response?.data?.success) {
+                        updateLayer({
+                            id: activeLayer.id,
+                            url: response.data.success.url,
+                            width: response.data.success.width,
+                            height: response.data.success.height,
+                            name: response.data.success.original_filename,
+                            publicId: response.data.success.public_id,
+                            format: response.data.success.format,
+                            resourceType: response.data.success.resource_type,
+                        })
+                        setActiveLayer(activeLayer.id);
+                    }
+                } catch (error) {
+                    toast.error(error instanceof Error ? error.message : 'Failed to upload image');
+                } finally {
+                    setGenerating(false);
                 }
-                setGenerating(false);
             }
         }
     })

@@ -33,35 +33,40 @@ export default function SmartCrop() {
     const [open, setOpen] = useState(false)
 
     const handleGenCrop = async () => {
-        setGenerating(true)
-        const res = await genCrop({
-            height: activeLayer.height!.toString(),
-            aspect: aspectRatio,
-            activeVideo: activeLayer.url!,
-        })
-
-        if (res?.data?.success) {
-            console.log(res.data.success)
-            setGenerating(false)
-            const newLayerId = crypto.randomUUID()
-            const thumbnailUrl = res.data.success.replace(/\.[^/.]+$/, ".jpg")
-            addLayer({
-                id: newLayerId,
-                name: "cropped " + activeLayer.name,
-                format: activeLayer.format,
-                height: height + activeLayer.height!,
-                width: width + activeLayer.width!,
-                url: res.data.success,
-                publicId: activeLayer.publicId,
-                resourceType: "video",
-                poster: thumbnailUrl,
+        try {
+            setGenerating(true)
+            const res = await genCrop({
+                height: activeLayer.height!.toString(),
+                aspect: aspectRatio,
+                activeVideo: activeLayer.url!,
             })
-            toast.success('Processing done')
-            setActiveLayer(newLayerId)
-            setOpen(false)
-        }
-        if (res?.data?.error) {
-            toast.error(res.data.error)
+
+            if (res?.data?.success) {
+                console.log(res.data.success)
+                const newLayerId = crypto.randomUUID()
+                const thumbnailUrl = res.data.success.replace(/\.[^/.]+$/, ".jpg")
+                addLayer({
+                    id: newLayerId,
+                    name: "cropped " + activeLayer.name,
+                    format: activeLayer.format,
+                    height: height + activeLayer.height!,
+                    width: width + activeLayer.width!,
+                    url: res.data.success,
+                    publicId: activeLayer.publicId,
+                    resourceType: "video",
+                    poster: thumbnailUrl,
+                })
+                toast.success('Processing done')
+                setActiveLayer(newLayerId)
+                setOpen(false)
+            }
+            if (res?.data?.error) {
+                toast.error(res.data.error)
+                setGenerating(false)
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'API credits exhausted. Please try again tomorrow.')
+        } finally {
             setGenerating(false)
         }
     }

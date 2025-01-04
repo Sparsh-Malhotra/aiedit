@@ -22,29 +22,34 @@ export default function BgRemove() {
     const [open, setOpen] = useState(false)
 
     const handleRemoveBackground = async () => {
-        setGenerating(true)
-        const res = await bgRemove({
-            activeImage: activeLayer.url!,
-            format: activeLayer.format!,
-        })
-        if (res?.data?.success) {
-            const newLayerId = crypto.randomUUID()
-            addLayer({
-                id: newLayerId,
-                name: "bg-removed" + activeLayer.name,
-                format: "png",
-                height: activeLayer.height,
-                width: activeLayer.width,
-                url: res.data.success,
-                publicId: activeLayer.publicId,
-                resourceType: "image",
+        try {
+            setGenerating(true)
+            const res = await bgRemove({
+                activeImage: activeLayer.url!,
+                format: activeLayer.format!,
             })
-            setGenerating(false)
-            setActiveLayer(newLayerId)
-            setOpen(false)
-        }
-        if (res?.serverError) {
-            toast.error(res.serverError)
+            if (res?.data?.success) {
+                const newLayerId = crypto.randomUUID()
+                addLayer({
+                    id: newLayerId,
+                    name: "bg-removed" + activeLayer.name,
+                    format: "png",
+                    height: activeLayer.height,
+                    width: activeLayer.width,
+                    url: res.data.success,
+                    publicId: activeLayer.publicId,
+                    resourceType: "image",
+                })
+                setActiveLayer(newLayerId)
+                setOpen(false)
+            }
+            if (res?.serverError) {
+                toast.error(res.serverError)
+                setGenerating(false)
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'API credits exhausted. Please try again tomorrow.')
+        } finally {
             setGenerating(false)
         }
     }

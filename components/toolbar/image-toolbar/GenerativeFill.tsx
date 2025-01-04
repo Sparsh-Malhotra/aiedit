@@ -17,6 +17,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import {toast} from "sonner";
 
 const PREVIEW_SIZE = 250
 const EXPANSION_THRESHOLD = 250 // px
@@ -79,31 +80,36 @@ export default function GenerativeFill() {
     }, [activeLayer, width, height])
 
     const handleGenFill = async () => {
-        setGenerating(true)
-        const res = await genFill({
-            width: (width + activeLayer.width!).toString(),
-            height: (height + activeLayer.height!).toString(),
-            aspect: "1:1",
-            activeImage: activeLayer.url!,
-        })
-        if (res?.data?.success) {
-            const newLayerId = crypto.randomUUID()
-            addLayer({
-                id: newLayerId,
-                name: "generative-fill",
-                format: activeLayer.format,
-                height: height + activeLayer.height!,
-                width: width + activeLayer.width!,
-                url: res.data.success,
-                publicId: activeLayer.publicId,
-                resourceType: "image",
+        try {
+            setGenerating(true)
+            const res = await genFill({
+                width: (width + activeLayer.width!).toString(),
+                height: (height + activeLayer.height!).toString(),
+                aspect: "1:1",
+                activeImage: activeLayer.url!,
             })
-            setGenerating(false)
-            setActiveLayer(newLayerId)
-            setOpen(false)
-        }
-        if (res?.data?.error) {
-            console.log(res.data.error)
+            if (res?.data?.success) {
+                const newLayerId = crypto.randomUUID()
+                addLayer({
+                    id: newLayerId,
+                    name: "generative-fill",
+                    format: activeLayer.format,
+                    height: height + activeLayer.height!,
+                    width: width + activeLayer.width!,
+                    url: res.data.success,
+                    publicId: activeLayer.publicId,
+                    resourceType: "image",
+                })
+                setActiveLayer(newLayerId)
+                setOpen(false)
+            }
+            if (res?.data?.error) {
+                console.log(res.data.error)
+                setGenerating(false)
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'API credits exhausted. Please try again tomorrow.')
+        } finally {
             setGenerating(false)
         }
     }
