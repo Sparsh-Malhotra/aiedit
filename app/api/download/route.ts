@@ -50,7 +50,6 @@ export async function GET(request: NextRequest) {
         const delay = 1000 // 1 second
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
             isProcessed = await checkImageProcessing(url)
-
             if (isProcessed) {
                 break
             }
@@ -60,10 +59,23 @@ export async function GET(request: NextRequest) {
         if (!isProcessed) {
             throw new Error("Image processing timed out")
         }
-        return NextResponse.json({
-            url,
-            filename: `${publicId}.${quality}.${format}`,
-        })
+
+        // Fetch the image from Cloudinary
+        const imageResponse = await fetch(url);
+        if (!imageResponse.ok) {
+            throw new Error('Failed to fetch image from Cloudinary');
+        }
+
+        // Get the image buffer
+        const imageBuffer = await imageResponse.arrayBuffer();
+
+        // Return the image as a blob with appropriate headers
+        return new NextResponse(imageBuffer, {
+            headers: {
+                'Content-Type': imageResponse.headers.get('content-type') || 'application/octet-stream',
+                'Content-Disposition': `attachment; filename="${publicId}.${quality}.${format}"`,
+            },
+        });
     } catch (error) {
         console.error("Error generating image URL:", error)
         return NextResponse.json(

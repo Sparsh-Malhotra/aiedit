@@ -12,59 +12,64 @@ import {
 import {useCallback, useState} from "react"
 import {cn} from "@/lib/utils"
 import {useLayerStore} from "@/store/layer-store";
+import {toast} from "sonner";
 
 export default function ExportAsset({resource}: { resource: string }) {
     const activeLayer = useLayerStore((state) => state.activeLayer)
     const [selected, setSelected] = useState("original")
+    const [downloading, setDownloading] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const handleDownload = useCallback(async () => {
         if (activeLayer?.publicId) {
             try {
-                const res = await fetch(
-                    `/api/download?publicId=${activeLayer.publicId}&quality=${selected}&resource_type=${activeLayer.resourceType}&format=${activeLayer.format}&url=${activeLayer.url}`
-                )
-                if (!res.ok) {
-                    throw new Error("Failed to fetch image URL")
-                }
-                const data = await res.json()
-                console.log(data)
-                if (data.error) {
-                    throw new Error(data.error)
+                setDownloading(true);
+                const response = await fetch(
+                    `/api/download?publicId=${activeLayer.publicId}&quality=${selected}&resource_type=${activeLayer.resourceType}&format=${activeLayer.format}&url=${activeLayer.url}`,
+                    {
+                        method: 'GET',
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Download failed');
                 }
 
-                // Fetch the image
-                const imageResponse = await fetch(data.url)
-                if (!imageResponse.ok) {
-                    throw new Error("Failed to fetch image")
-                }
-                const imageBlob = await imageResponse.blob()
+                // Get the filename from the content-disposition header or use a default
+                const contentDisposition = response.headers.get('content-disposition');
+                const filename = contentDisposition
+                    ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+                    : `${activeLayer.name}.${activeLayer.format}`;
 
-                // Create a download link and trigger the download
-                const downloadUrl = URL.createObjectURL(imageBlob)
-                const link = document.createElement("a")
-                link.href = downloadUrl
-                link.download = data.filename
-                document.body.appendChild(link)
-                link.click()
-                document.body.removeChild(link)
-
-                // Clean up the object URL
-                URL.revokeObjectURL(downloadUrl)
+                // Create a blob from the response
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode?.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                setOpen(false);
+                toast.success('Download completed successfully');
             } catch (error) {
-                console.error("Download failed:", error)
-                // Here you could show an error message to the user
+                console.error('Download failed:', error);
+                toast.error('Failed to download file');
+            } finally {
+                setDownloading(false);
             }
         }
-    }, [activeLayer, selected])
+    }, [activeLayer, selected]);
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger disabled={!activeLayer?.url} asChild>
                 <Button variant="outline" className="py-8">
-          <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
-            Export
-            <Download size={18}/>
-          </span>
+                    <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
+                        Export
+                        <Download size={18}/>
+                    </span>
                 </Button>
             </DialogTrigger>
             <DialogContent className='max-w-[90%] sm:max-w-md'>
@@ -132,8 +137,11 @@ export default function ExportAsset({resource}: { resource: string }) {
                         </Card>
                     </div>
                 </div>
-                <Button onClick={handleDownload}>
-                    Download {selected} {resource}
+                <Button
+                    onClick={handleDownload}
+                    disabled={downloading}
+                >
+                    {downloading ? 'Downloading...' : `Download ${selected} ${resource}`}
                 </Button>
             </DialogContent>
         </Dialog>
