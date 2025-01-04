@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import {ThemeProvider} from "@/components/theme/ThemeProvider";
+import {CSPostHogProvider} from "@/components/PosthogProvider";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -29,7 +30,15 @@ export default function RootLayout({
         <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-        <ThemeProvider attribute='class' defaultTheme='system' enableSystem>{children}</ThemeProvider>
+        <CSPostHogProvider>
+            <ThemeProvider
+                attribute='class'
+                defaultTheme='system'
+                enableSystem
+            >
+                {children}
+            </ThemeProvider>
+        </CSPostHogProvider>
         </body>
         </html>
     );
