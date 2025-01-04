@@ -67,7 +67,7 @@ export default function ExportAsset({resource}: { resource: string }) {
           </span>
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className='max-w-[90%] sm:max-w-md'>
                 <div>
                     <h3 className="text-center text-2xl font-medium pb-4">Export</h3>
                     <div className="flex flex-col gap-4">

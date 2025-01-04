@@ -14,12 +14,12 @@ function LayerInfo({layer, layerIndex}: { layer: Layer, layerIndex: number }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" size='icon'>
                     <Ellipsis size={14}/>
                 </Button>
             </DialogTrigger>
-            <DialogContent className="text-xs">
-                <DialogTitle>Layer {layer.id}</DialogTitle>
+            <DialogContent className="text-xs max-w-[340px] md:max-w-[425px]">
+                <DialogTitle className='pt-2 md:pt-4'>Layer {layer.id}</DialogTitle>
                 <div className="py-4 space-y-0.5">
                     <p>
                         <span className="font-bold">Filename:</span> {layer.name}

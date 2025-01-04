@@ -1,10 +1,5 @@
 import React, {useMemo, useState} from "react"
 import {Button} from "@/components/ui/button"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import {Crop} from "lucide-react"
@@ -12,6 +7,16 @@ import {AnimatePresence, motion} from "framer-motion"
 import {useLayerStore} from "@/store/layer-store";
 import {useImageStore} from "@/store/image-store";
 import {genFill} from "@/server/gen-fill";
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
 
 const PREVIEW_SIZE = 250
 const EXPANSION_THRESHOLD = 250 // px
@@ -24,6 +29,7 @@ export default function GenerativeFill() {
     const [width, setWidth] = useState(0)
     const generating = useImageStore((state) => state.generating)
     const setActiveLayer = useLayerStore((state) => state.setActiveLayer)
+    const [open, setOpen] = useState(false)
 
     const previewStyle = useMemo(() => {
         if (!activeLayer.width || !activeLayer.height) return {}
@@ -81,8 +87,6 @@ export default function GenerativeFill() {
             activeImage: activeLayer.url!,
         })
         if (res?.data?.success) {
-            console.log(res.data.success)
-            setGenerating(false)
             const newLayerId = crypto.randomUUID()
             addLayer({
                 id: newLayerId,
@@ -94,7 +98,9 @@ export default function GenerativeFill() {
                 publicId: activeLayer.publicId,
                 resourceType: "image",
             })
+            setGenerating(false)
             setActiveLayer(newLayerId)
+            setOpen(false)
         }
         if (res?.data?.error) {
             console.log(res.data.error)
@@ -141,16 +147,16 @@ export default function GenerativeFill() {
     }
 
     return (
-        <Popover>
-            <PopoverTrigger disabled={!activeLayer?.url} asChild>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger disabled={!activeLayer?.url} asChild>
                 <Button variant="outline" className="py-8">
-          <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
-            Generative Fill
-            <Crop size={18}/>
-          </span>
+                    <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
+                        Generative Fill
+                        <Crop size={18}/>
+                    </span>
                 </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full">
+            </DialogTrigger>
+            <DialogContent className="max-w-[90%] sm:max-w-xl">
                 <div className="flex flex-col h-full">
                     <div className="space-y-2">
                         <h4 className="font-medium text-center py-2 leading-none">
@@ -237,7 +243,7 @@ export default function GenerativeFill() {
                         {generating ? "Generating" : "Generative Fill 🎨"}
                     </Button>
                 </div>
-            </PopoverContent>
-        </Popover>
+            </DialogContent>
+        </Dialog>
     )
 }

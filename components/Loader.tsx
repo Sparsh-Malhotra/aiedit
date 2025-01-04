@@ -14,7 +14,7 @@ function Loader() {
     const activeLayer = useLayerStore((state) => state.activeLayer)
     return (
         <Dialog open={generating} onOpenChange={setGenerating}>
-            <DialogContent className="sm:max-w-[425px] flex flex-col items-center">
+            <DialogContent className="max-w-[340px] md:max-w-[425px] flex flex-col items-center">
                 <DialogHeader>
                     <DialogTitle>{activeLayer.name}</DialogTitle>
                     <DialogDescription>

@@ -18,7 +18,7 @@ export default function UploadForm() {
     )
     if (!activeLayer.url && !layerComparisonMode)
         return (
-            <div className="w-full p-24 flex flex-col  justify-center  h-full">
+            <div className="w-full p-8 md:p-24 flex flex-col  justify-center  h-full">
                 {selectedType === "image" ? <UploadImage/> : null}
                 {selectedType === "video" ? <UploadVideo/> : null}
 

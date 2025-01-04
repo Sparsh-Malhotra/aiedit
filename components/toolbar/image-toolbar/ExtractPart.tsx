@@ -3,7 +3,6 @@
 import React, {useState} from 'react';
 import {useImageStore} from "@/store/image-store";
 import {useLayerStore} from "@/store/layer-store";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
 import {Scissors} from "lucide-react";
 import {Label} from "@/components/ui/label";
@@ -11,6 +10,11 @@ import {Input} from "@/components/ui/input";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {Checkbox} from "@/components/ui/checkbox";
 import {extractPart} from "@/server/extract-part";
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 function ExtractPart() {
     const setGenerating = useImageStore((state) => state.setGenerating)
@@ -18,6 +22,7 @@ function ExtractPart() {
     const addLayer = useLayerStore((state) => state.addLayer)
     const generating = useImageStore((state) => state.generating)
     const setActiveLayer = useLayerStore((state) => state.setActiveLayer)
+    const [open, setOpen] = useState(false)
 
     const [prompts, setPrompts] = useState([""])
     const [multiple, setMultiple] = useState(false)
@@ -34,17 +39,46 @@ function ExtractPart() {
         setPrompts(newPrompts)
     }
 
+    const handleExtract = async () => {
+        setGenerating(true)
+        const res = await extractPart({
+            prompts: prompts.filter((p) => p.trim() !== ""),
+            activeImage: activeLayer.url!,
+            format: activeLayer.format!,
+            multiple,
+            mode: mode as "default" | "mask",
+            invert,
+        })
+
+        if (res?.data?.success) {
+            const newLayerId = crypto.randomUUID()
+            addLayer({
+                id: newLayerId,
+                name: "extracted-" + activeLayer.name,
+                format: ".png",
+                height: activeLayer.height,
+                width: activeLayer.width,
+                url: res.data.success,
+                publicId: activeLayer.publicId,
+                resourceType: "image",
+            })
+            setGenerating(false)
+            setActiveLayer(newLayerId)
+            setOpen(false)
+        }
+    }
+
     return (
-        <Popover>
-            <PopoverTrigger disabled={!activeLayer?.url} asChild>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger disabled={!activeLayer?.url} asChild>
                 <Button variant="outline" className="py-8">
-          <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
-            AI Extract
-            <Scissors size={18}/>
-          </span>
+                    <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
+                        AI Extract
+                        <Scissors size={18}/>
+                    </span>
                 </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full">
+            </DialogTrigger>
+            <DialogContent className="max-w-[90%] sm:max-w-md">
                 <div className="grid gap-4">
                     <div className="space-y-2">
                         <h4 className="font-medium leading-none">AI Extract</h4>
@@ -108,38 +142,12 @@ function ExtractPart() {
                         prompts.every((p) => p.trim() === "")
                     }
                     className="w-full mt-4"
-                    onClick={async () => {
-                        setGenerating(true)
-                        const res = await extractPart({
-                            prompts: prompts.filter((p) => p.trim() !== ""),
-                            activeImage: activeLayer.url!,
-                            format: activeLayer.format!,
-                            multiple,
-                            mode: mode as "default" | "mask",
-                            invert,
-                        })
-
-                        if (res?.data?.success) {
-                            const newLayerId = crypto.randomUUID()
-                            addLayer({
-                                id: newLayerId,
-                                name: "extracted-" + activeLayer.name,
-                                format: ".png",
-                                height: activeLayer.height,
-                                width: activeLayer.width,
-                                url: res.data.success,
-                                publicId: activeLayer.publicId,
-                                resourceType: "image",
-                            })
-                            setGenerating(false)
-                            setActiveLayer(newLayerId)
-                        }
-                    }}
+                    onClick={handleExtract}
                 >
                     {generating ? "Extracting..." : "Extract"}
                 </Button>
-            </PopoverContent>
-        </Popover>
+            </DialogContent>
+        </Dialog>
     )
 }
 

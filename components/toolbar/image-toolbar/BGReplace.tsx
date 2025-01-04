@@ -1,12 +1,16 @@
 import React, {useState} from 'react';
 import {useImageStore} from "@/store/image-store";
 import {useLayerStore} from "@/store/layer-store";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
 import {ImageOff} from "lucide-react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {replaceBackground} from "@/server/bg-replace";
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 function BgReplace() {
     const setGenerating = useImageStore((state) => state.setGenerating)
@@ -14,20 +18,20 @@ function BgReplace() {
     const addLayer = useLayerStore((state) => state.addLayer)
     const generating = useImageStore((state) => state.generating)
     const setActiveLayer = useLayerStore((state) => state.setActiveLayer)
-
+    const [open, setOpen] = useState(false)
     const [prompt, setPrompt] = useState("")
 
     return (
-        <Popover>
-            <PopoverTrigger disabled={!activeLayer?.url} asChild>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger disabled={!activeLayer?.url} asChild>
                 <Button variant="outline" className="py-8">
-          <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
-            AI BG Replace
-            <ImageOff size={18}/>
-          </span>
+                    <span className="flex gap-1 items-center justify-center flex-col text-xs font-medium">
+                        AI BG Replace
+                        <ImageOff size={18}/>
+                    </span>
                 </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full">
+            </DialogTrigger>
+            <DialogContent className="max-w-[90%] sm:max-w-md">
                 <div className="grid gap-4">
                     <div className="space-y-2">
                         <h4 className="font-medium leading-none">
@@ -74,13 +78,14 @@ function BgReplace() {
                             })
                             setGenerating(false)
                             setActiveLayer(newLayerId)
+                            setOpen(false)
                         }
                     }}
                 >
                     {generating ? "Generating..." : "Replace Background"}
                 </Button>
-            </PopoverContent>
-        </Popover>
+            </DialogContent>
+        </Dialog>
     )
 }
 

@@ -29,6 +29,9 @@ function LayerComparison({layers}: { layers: Layer[] }) {
                     src={layers[0].url || ""}
                     srcSet={layers[0].url || ""}
                     alt={layers[0].name || "Image one"}
+                    style={{
+                        objectFit: 'contain'
+                    }}
                 />
             }
             itemTwo={
@@ -36,8 +39,12 @@ function LayerComparison({layers}: { layers: Layer[] }) {
                     src={layers[1].url || ""}
                     srcSet={layers[1].url || ""}
                     alt={layers[1].name || "Image two"}
+                    style={{
+                        objectFit: 'contain'
+                    }}
                 />
             }
+            className='h-[80vh]'
         />
     )
 }

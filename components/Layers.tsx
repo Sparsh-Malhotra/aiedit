@@ -19,8 +19,10 @@ import {useLayerStore} from "@/store/layer-store";
 import {useImageStore} from "@/store/image-store";
 import LayerImage from "@/components/layers/LayerImage";
 import LayerInfo from "@/components/layers/LayerInfo";
+import {useDevice} from "@/lib/hooks/useDevice";
 
 export default function Layers() {
+    const {isMobile, hasMounted} = useDevice();
     const layers = useLayerStore((state) => state.layers)
     const activeLayer = useLayerStore((state) => state.activeLayer)
     const setActiveLayer = useLayerStore((state) => state.setActiveLayer)
@@ -57,10 +59,12 @@ export default function Layers() {
         [layerComparisonMode, layers]
     )
 
+    if (!hasMounted) return null
+
     return (
         <MCard
             layout
-            className="basis-[320px] shrink-0  scrollbar-thin scrollbar-track-secondary overflow-y-scroll scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-rounded-full overflow-x-hidden relative flex flex-col shadow-2xl"
+            className="border-transparent basis-[320px] shrink-0  scrollbar-thin scrollbar-track-secondary overflow-y-scroll scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-rounded-full overflow-x-hidden relative flex flex-col shadow-2xl"
         >
             <CardHeader className="sticky top-0 z-50 px-4 py-6  min-h-28 bg-card shadow-sm">
                 {layerComparisonMode ? (
@@ -109,7 +113,7 @@ export default function Layers() {
                                 exit={{scale: 0, opacity: 0}}
                                 layout
                                 className={cn(
-                                    "cursor-pointer ease-in-out hover:bg-secondary border border-transparent",
+                                    "cursor-pointer ease-in-out hover:bg-secondary border border-secondary",
                                     {
                                         "border-primary": layerComparisonMode
                                             ? comparedLayers.includes(layer.id)
@@ -145,26 +149,30 @@ export default function Layers() {
                     })}
                 </AnimatePresence>
             </motion.div>
-            <CardContent className="sticky bottom-0 bg-card flex gap-2  shrink-0">
-                <MButton
-                    layout
-                    onClick={() => {
-                        addLayer({
-                            id: crypto.randomUUID(),
-                            url: "",
-                            height: 0,
-                            width: 0,
-                            publicId: "",
-                            name: "",
-                            format: "",
-                        })
-                    }}
-                    variant="outline"
-                    className="w-full flex gap-2"
-                >
-                    <span className="text-xs">Create Layer</span>
-                    <Layers2 className="text-secondary-foreground" size={18}/>
-                </MButton>
+            <CardContent className="pt-4 sticky bottom-0 bg-card flex gap-2  shrink-0">
+                {!isMobile &&
+                    <MButton
+                        layout
+                        onClick={() => {
+                            const newLayerId = crypto.randomUUID()
+                            addLayer({
+                                id: newLayerId,
+                                url: "",
+                                height: 0,
+                                width: 0,
+                                publicId: "",
+                                name: "",
+                                format: "",
+                            })
+                            setActiveLayer(newLayerId);
+                        }}
+                        variant="outline"
+                        className="w-full flex gap-2"
+                    >
+                        <span className="text-xs">Create Layer</span>
+                        <Layers2 className="text-secondary-foreground" size={18}/>
+                    </MButton>
+                }
                 <MButton
                     disabled={!activeLayer.url || activeLayer.resourceType === "video"}
                     layout

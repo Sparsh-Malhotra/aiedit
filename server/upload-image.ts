@@ -36,7 +36,10 @@ export const uploadImage = actionClient
             const result = await new Promise((resolve, reject) => {
                 cloudinary.uploader.upload(fileUri, {
                     folder: 'aiedit',
-                    invalidate: true
+                    invalidate: true,
+                    filename_override: image.name,
+                    use_filename: true,
+                    unique_filename: false
                 })
                     .then(resolve)
                     .catch(reject);

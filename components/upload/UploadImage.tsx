@@ -44,6 +44,7 @@ function UploadImage() {
                 setActiveLayer(activeLayer.id);
 
                 const response = await uploadImage({formData})
+                console.log(response)
                 if (response?.data?.success) {
                     updateLayer({
                         id: activeLayer.id,

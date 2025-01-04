@@ -17,7 +17,7 @@ export default function LayerImage({layer}: { layer: Layer }) {
                     />
                 </div>
                 <div className="relative">
-                    <p className="text-xs">{`${layer.name?.slice(0, 15)}.${
+                    <p className="text-xs truncate">{`${layer.name?.slice(0, 15)}.${
                         layer.format
                     }`}</p>
                 </div>
